@@ -1,0 +1,56 @@
+classDiagram
+    class Owner {
+        +str name
+        +int available_minutes
+        +dict preferences
+        +list~Pet~ pets
+        +add_pet(pet)
+        +remove_pet(pet_name)
+        +get_all_tasks() list~Task~
+        +filter_tasks(pet_name, completed) list~Task~
+    }
+
+    class Pet {
+        +str name
+        +str species
+        +int age
+        +list~Task~ tasks
+        +add_task(task)
+        +remove_task(title)
+        +get_pending_tasks() list~Task~
+        +complete_task(title, today) Task
+    }
+
+    class Task {
+        +str title
+        +int duration_minutes
+        +int priority
+        +str category
+        +str preferred_time
+        +bool completed
+        +str pet_name
+        +str start_time
+        +date due_date
+        +str frequency
+        +start_minutes() int
+        +end_minutes() int
+        +mark_complete(today) Task
+        +is_high_priority() bool
+    }
+
+    class Scheduler {
+        +Owner owner
+        +list~Task~ plan
+        +list skipped
+        +sort_by_time(tasks) list~Task~
+        +find_conflicts(tasks, today) list~str~
+        +generate_daily_plan(on_date) list~Task~
+        +explain_plan() str
+    }
+
+    Owner "1" o-- "*" Pet : has
+    Pet "1" o-- "*" Task : has
+    Scheduler --> Owner : plans for
+    Scheduler ..> Task : sorts, selects, checks for overlaps
+    Pet ..> Task : adds the next occurrence of a recurring task
+    Task ..> Task : mark_complete() returns a copy for the next day or week
